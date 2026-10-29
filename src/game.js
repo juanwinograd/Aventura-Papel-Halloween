@@ -1,5 +1,5 @@
-import { HEROES, characterSVG } from './characters.js';
-import { CHAPTERS, MOVIE, SAVE_KEY, readSave } from './story.js';
+import { HEROES, characterSVG, powerKey } from './characters.js';
+import { CHAPTERS, MOVIE, SAVE_KEY, HOUSES, readSave } from './story.js';
 import { Art } from './art.js';
 import { HalloweenGame } from './engine.js';
 const $=selector=>document.querySelector(selector),canvas=$('#game'),art=new Art(canvas),screen=$('#screen'),dialog=$('#help-dialog');
@@ -21,17 +21,22 @@ function playSound(kind){
 function focusGame(){canvas.focus({preventScroll:true});}
 function renderCast(){
   $('#cast').innerHTML=HEROES.map((hero,i)=>'<button class="hero-card" data-hero="'+i+'" aria-pressed="'+(game.hero===i)+'" aria-label="'+hero.name+', disfraz de '+hero.costume+'"><span class="shortcut">'+(i+1)+'</span>'+characterSVG(hero.id)+'<strong>'+hero.name+'</strong><small>'+hero.costume+'</small></button>').join('');
-  const h=HEROES[game.hero];$('#character-description').innerHTML='<b>'+h.name+' · '+h.power+'.</b> '+h.description;
+  const h=HEROES[game.hero];$('#character-description').innerHTML='<b>'+h.name+' · '+h.costume+'.</b> Conserva sus poderes originales. Elegí un poder abajo o usá su tecla.';
+  $('#powers-toolbar').innerHTML=h.powers.map((ability,i)=>'<button class="ability" data-power="'+i+'"><kbd>'+powerKey(h,i).toUpperCase()+'</kbd><span>'+ability.name+'</span><small>Listo</small></button>').join('');
 }
 function updateHUD(){
   $('#chapters').innerHTML=CHAPTERS.map((ch,i)=>'<li class="chapter '+(i===game.stage&&!game.won?'active':i<game.stage||game.won?'done':'')+'" '+(i===game.stage?'aria-current="step"':'')+'><span class="chapter-number">'+(i<game.stage||game.won?'✓':'0'+(i+1))+'</span><div><strong>'+ch.title+'</strong><small>'+ch.subtitle+'</small></div><span class="chapter-symbol" aria-hidden="true">'+ch.icon+'</span></li>').join('');
   $('#chapter-label').textContent=game.mode==='title'?'LA AVENTURA ESTÁ POR EMPEZAR':'PARTE '+(game.stage+1)+' · '+CHAPTERS[game.stage].title.toUpperCase();
   $('#hearts').textContent='♥ '.repeat(game.hp)+'♡ '.repeat(5-game.hp);$('#hearts').setAttribute('aria-label',game.hp+' de 5 corazones');
-  $('#bag').textContent=game.stage===2?'Llaves '+game.progress.keys.length+' / 3':game.stage===3?'Dulces recuperados: '+(game.won?'12':'0'):'Dulces '+game.progress.candy+' / 12';
-  $('#power-status').textContent=game.stage===1?'▷ Función en curso':(game.cooldown>0?'✦ Recarga '+Math.ceil(game.cooldown)+' s':'✦ '+HEROES[game.hero].power+' · Q');
-  $('#objective').textContent=game.won?'¡Halloween está a salvo! Los ocho amigos vuelven al barrio para compartir sus dulces.':game.mode==='title'?'Prepará tu disfraz. La noche de Halloween nos espera.':CHAPTERS[game.stage].objective;
+  $('#bag').textContent=game.stage===1&&game.blackout?'Arreglos '+game.progress.repairs.length+' / 3':game.stage===2?'Llaves '+game.progress.keys.length+' / 3':game.stage===3?'Dulces recuperados: '+(game.won?'12':'0'):'Dulces '+game.progress.candy+' / 12';
+  $('#power-status').textContent=game.stage===1&&!game.blackout?'▷ Función en curso':'✦ Poderes de Halloween + originales';
+  for(const button of document.querySelectorAll('[data-power]')){const left=game.cooldowns[game.hero+':'+button.dataset.power]||0;button.querySelector('small').textContent=left>0?Math.ceil(left)+' s':'Listo';button.disabled=game.mode!=='playing'||left>0;}
+  $('#touch-extra').hidden=HEROES[game.hero].special.length<2;
+  const resident=$('#resident');resident.hidden=game.stage!==0||!game.challenge||game.mode!=='playing';
+  if(!resident.hidden){const h=HOUSES[game.challenge.index],hero=HEROES.find(hero=>hero.id===h.hero),index=HEROES.indexOf(hero);$('#resident-name').textContent=h.resident+' · Casa '+(game.challenge.index+1);$('#resident-request').textContent=h.request;$('#resident-choose').textContent='Elegir a '+hero.name;$('#resident-choose').dataset.hero=index;$('#resident-progress').textContent=game.props.filter(p=>p.done).length+' / 3';}
+  $('#objective').textContent=game.stage===0&&game.challenge?HOUSES[game.challenge.index].request:game.won?'¡Halloween está a salvo! Los ocho amigos vuelven al barrio para compartir sus dulces.':game.mode==='title'?'Prepará tu disfraz. La noche de Halloween nos espera.':CHAPTERS[game.stage].objective;
   $('#pause').disabled=!['playing','movie','paused'].includes(game.mode);$('#pause').textContent=game.mode==='paused'?'▷':'Ⅱ';$('#pause').setAttribute('aria-label',game.mode==='paused'?'Continuar juego':'Pausar juego');
-  if(game.mode==='movie'){const frame=MOVIE[game.progress.movie];$('#movie-speaker').textContent=frame.speaker;$('#movie-text').textContent=frame.text;$('#movie-next').textContent=game.progress.movie===MOVIE.length-1?'Entrar a la casa →':'Siguiente →';}
+  if(game.mode==='movie'){const frame=MOVIE[game.progress.movie];$('#movie-speaker').textContent=frame.speaker;$('#movie-text').textContent=frame.text;$('#movie-next').textContent=game.progress.movie===2?'Ofrecernos para repararlo →':game.progress.movie===MOVIE.length-1?'Entrar a la casa →':'Siguiente →';}
 }
 function syncScreen(){
   const mode=game.mode;screen.hidden=['playing','movie'].includes(mode);$('.viewport').classList.toggle('playing',mode==='playing');$('#movie-caption').hidden=mode!=='movie';
@@ -65,10 +70,10 @@ window.addEventListener('keydown',event=>{
   const key=event.key.length===1?event.key.toLowerCase():event.key;
   if(event.target.closest('button,a')&&[' ','Enter'].includes(key))return;
   if(keyMap[key]){event.preventDefault();input[keyMap[key]]=true;}
-  if([' ','e','q','p','Escape'].includes(key))event.preventDefault();
+  if([' ','e','q','r','z','x','c','v','p','Escape'].includes(key))event.preventDefault();
   if(event.repeat)return;
   if(key==='e'||key===' ')game.action();
-  if(key==='q')game.power();
+  const ability=HEROES[game.hero].powers.findIndex((_,i)=>powerKey(HEROES[game.hero],i)===key);if(ability>=0){event.preventDefault();game.power(ability);}
   if(key==='p'||key==='Escape'){clearInput();game.pause();}
   if(/^[1-8]$/.test(key))game.chooseHero(Number(key)-1);
 });
@@ -80,6 +85,9 @@ for(const button of document.querySelectorAll('[data-move]')){
   for(const type of ['pointerup','pointercancel','lostpointercapture'])button.addEventListener(type,()=>delete input[direction]);
 }
 for(const [selector,action] of [['#touch-action',()=>game.action()],['#touch-power',()=>game.power()]])$(selector).addEventListener('pointerdown',event=>{event.preventDefault();action();});
+$('#powers-toolbar').addEventListener('click',event=>{const button=event.target.closest('[data-power]');if(button){game.power(Number(button.dataset.power));focusGame();}});
+$('#resident-choose').addEventListener('click',event=>{game.chooseHero(Number(event.currentTarget.dataset.hero));focusGame();});
+$('#touch-extra').addEventListener('pointerdown',event=>{event.preventDefault();game.power(1);});
 canvas.addEventListener('pointerdown',focusGame);
 renderCast();updateHUD();
 let last=performance.now(),hudClock=0;

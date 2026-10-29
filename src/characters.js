@@ -1,18 +1,32 @@
 // Costume illustrations based on the line-drawn cast of Aventura en Papel.
-export const HEROES = [
-  {id:'gaspar',name:'Gaspar',costume:'Esqueleto',color:'#22bfd5',power:'Baile de huesos',description:'Un baile de huesos que ahuyenta a los enemigos cercanos.',kind:'burst'},
-  {id:'vicente',name:'Vicente',costume:'Coatlicue',color:'#f05a96',power:'Escudo de serpientes',description:'Su disfraz de Coatlicue, diosa azteca, tiene una falda de serpientes. Su escudo te protege.',kind:'shield'},
-  {id:'fabrizio',name:'Fabrizio',costume:'Vampiro',color:'#9ecb52',power:'Vuelo de vampiro',description:'Se transforma en murciélago: vuela más rápido y queda protegido por un momento.',kind:'flight'},
-  {id:'luca',name:'Luca',costume:'Ninja',color:'#20b5d5',power:'Estrella ninja',description:'Lanza una estrella al enemigo más cercano, incluso a distancia.',kind:'ranged'},
-  {id:'aaron',name:'Aaron Mamani',costume:'Zombi',color:'#17a995',power:'Abrazo zombi',description:'Un abrazo de susto ahuyenta enemigos y recupera un corazón.',kind:'heal'},
-  {id:'sebastian',name:'Sebástian',costume:'Gárgola',color:'#a293a8',power:'Golpe de piedra',description:'Sacude el suelo y ahuyenta a todos los enemigos de alrededor.',kind:'quake'},
-  {id:'benicio',name:'Benicio',costume:'Slenderman',color:'#ded9e4',power:'Paso de sombra',description:'Se vuelve una sombra veloz e intocable durante unos segundos.',kind:'shadow'},
-  {id:'amaral',name:'Amaral',costume:'Bruja',color:'#b397df',power:'Hechizo violeta',description:'Su hechizo alcanza a los enemigos cercanos y los deja quietos.',kind:'spell'},
-];
+const ability=(name,kind,cooldown=5)=>({name,kind,cooldown});
+const original={
+ gaspar:[ability('Brazo elástico','stretch',3),ability('Superpuño','punch',4),ability('Teletransporte','teleport',6),ability('Papapumba','potato',5)],
+ vicente:[ability('Prisma','prism',5),ability('Rayo regalo','gift',4),ability('Espacio-tiempo','teleport',6)],
+ fabrizio:[ability('Cubo reflector','reflect',6),ability('Invisibilidad','invisible',8),ability('Picos','spikes',3),ability('¡Fiesta!','party',7)],
+ luca:[ability('Rayo eléctrico','lightning',3),ability('Tormenta','storm',7),ability('Campo de fuerza','shield',7),ability('Hacerse chiquito','mini',5)],
+ aaron:[ability('Burbuja temporal','time',5)],
+ sebastian:[ability('Espada de piedra','sword',3),ability('Martillo de roca','hammer',5),ability('Piedra arrojadiza','stone',3)],
+ benicio:[ability('Clonarse','clone',8)],
+ amaral:[ability('Neblina','fog',6),ability('Sol cegador','sun',5),ability('Viento','wind',3)],
+};
+export const HEROES=[
+ {id:'gaspar',name:'Gaspar',costume:'Esqueleto',color:'#22bfd5',special:[ability('Lanzar huesos','bones',1.2)]},
+ {id:'vicente',name:'Vicente',costume:'Coatlicue',color:'#f05a96',special:[ability('Crear serpientes','snakes',4)]},
+ {id:'fabrizio',name:'Fabrizio',costume:'Vampiro',color:'#9ecb52',special:[ability('Murciélago','bat',5)]},
+ {id:'luca',name:'Luca',costume:'Ninja',color:'#20b5d5',special:[ability('Estrella ninja','ninja',1.2),ability('Catana','katana',1)]},
+ {id:'aaron',name:'Aaron Mamani',costume:'Zombi',color:'#17a995',special:[ability('Pegar','punch',1)]},
+ {id:'sebastian',name:'Sebástian',costume:'Gárgola',color:'#a293a8',special:[ability('Resistencia','resist',6),ability('Vuelo de gárgola','flight',5)]},
+ {id:'benicio',name:'Benicio',costume:'Slenderman',color:'#ded9e4',special:[ability('Crear ilusiones','illusions',6)]},
+ {id:'amaral',name:'Amaral',costume:'Bruja',color:'#b397df',special:[ability('Pintar de violeta','paint',3)]},
+].map(h=>({...h,power:h.special[0].name,description:'Sus poderes de Halloween y todos sus poderes originales.',powers:[...h.special,...original[h.id]]}));
+export const POWER_KEYS=['q','r','z','x','c','v','b'];
+export function powerKey(hero,index){return index===0?'q':index<hero.special.length?'r':['z','x','c','v'][index-hero.special.length];}
 export function characterSVG(id) {
   const hero=HEROES.find(h=>h.id===id)||HEROES[0],c=hero.color;
   const face='<circle cx="45" cy="40" r="15" fill="#fff2dc"/><circle cx="40" cy="39" r="1.7" fill="#38253e"/><circle cx="50" cy="39" r="1.7" fill="#38253e"/><path d="M40 46 Q45 50 50 45" fill="none" stroke="#38253e" stroke-width="2"/>';
-  const body='<path d="M45 56V87 M45 64L29 76 M45 64L61 76 M45 87L33 103 M45 87L57 103" fill="none" stroke="'+c+'" stroke-width="5" stroke-linecap="round"/>';
+  const legs=['luca','vicente','aaron'].includes(id)?'':' M45 87L33 103 M45 87L57 103';
+  const body='<path d="M45 56V87 M45 64L29 76 M45 64L61 76'+legs+'" fill="none" stroke="'+c+'" stroke-width="5" stroke-linecap="round"/>';
   let art='';
   if(id==='gaspar')art='<path d="M34 27L30 17M42 25V12M51 26L57 17" stroke="'+c+'" stroke-width="4"/>'+body+'<path d="M45 57V87M34 63Q45 71 56 63M35 70Q45 78 55 70M37 78Q45 84 53 78M33 98L40 88M57 98L50 88" fill="none" stroke="#fff2dc" stroke-width="3" stroke-linecap="round"/><path d="M29 40Q29 24 45 25Q61 24 61 40L55 51H35Z" fill="#fff2dc" stroke="'+c+'" stroke-width="3"/><ellipse cx="39" cy="39" rx="4" ry="5" fill="#302539"/><ellipse cx="51" cy="39" rx="4" ry="5" fill="#302539"/><path d="M42 47L45 43L48 47M38 51H52M42 49V54M47 49V54" stroke="#302539" stroke-width="2"/>';
   if(id==='vicente')art='<path d="M45 25Q34 19 45 15Q56 11 45 6" fill="none" stroke="'+c+'" stroke-width="4"/>'+body+'<path d="M30 59L23 94Q45 108 68 94L59 59Z" fill="#2b735e" stroke="#f0b661" stroke-width="2"/><g fill="none" stroke="#b6db87" stroke-width="3"><path d="M32 66Q48 70 32 78T34 98M44 64Q60 71 44 79T46 99M56 66Q40 73 56 81T58 98"/></g>'+face+'<path d="M28 31L23 19L37 25L45 15L53 25L67 19L62 32Z" fill="#55ad8c" stroke="#f1c472" stroke-width="2"/><path d="M30 57Q45 70 60 57" stroke="#ffcd80" stroke-width="5" fill="none"/><circle cx="45" cy="62" r="4" fill="#f4dca8"/>';
