@@ -53,7 +53,12 @@ export class Art {
     if(pumpkin){this.box(-20,-72,40,39,e.paint>0?'#b875ff':'#ff9637','#372332',2);this.line(0,-74,6,-82,'#91c46c',4);this.circle(-8,-58,3,'#211826');this.circle(8,-58,3,'#211826');this.path([[-11,-48],[0,-44],[12,-50],[6,-39],[-6,-39]],'#211826',null);}
     else this.circle(0,-52,21,color,e.id==='radioactive'?'#d8ff9f':'#9b8da9',2);
     if(e.id==='radioactive'){this.box(-19,-63,38,26,'#4a5850','#20252c',2);this.circle(-9,-55,7,'#c9f1a0','#253a30',2);this.circle(9,-55,7,'#c9f1a0','#253a30',2);this.circle(0,-40,8,'#59685b','#182a25',2);this.circle(0,-40,3,'#151c1a');}
-    if(female){const hair=e.id==='black-wisa'?'#15121b':'#e5a14e';this.path([[-23,-54],[-29,-78],[-14,-88],[1,-79],[17,-86],[29,-70],[26,-48],[35,-32],[20,-36],[15,-63],[5,-70],[-5,-67],[-17,-68],[-17,-40],[-32,-30],[-26,-49]],hair,'#211826',2);}
+    if(female){
+      // Seshia's mirrored hair strokes from Aventura-Papel/src/art.js, girl().
+      // Scale the original head radius of 14 to the Wis head radius of 21.
+      const hair=e.id==='black-wisa'?'#15121b':'#f29b43',scale=1.5;
+      for(const side of [-1,1])this.path([[side*12,-61],[side*22,-45],[side*33,-47],[side*36,-53]].map(([x,y])=>[x*scale,-52+(y+52)*scale]),null,hair,6);
+    }
     if(e.paint>0)this.text('VIOLETA',0,-94,13,'#d7b3ff','center');this.text(e.name,0,23,16,'#e9d9f0','center');c.restore();
   }
   projectile(b){

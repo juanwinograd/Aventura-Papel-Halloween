@@ -31,7 +31,7 @@ Patrick Hand: Patrick Wagesreiter; licencia SIL Open Font License incluida en as
 
 - Doce casas repartidas en tres cuadras. Cada vecino propone un truco propio; hay que realizarlo con el personaje y poder indicado para recibir su dulce. Las flechas de los extremos llevan a la siguiente cuadra; también se puede usar E junto a los carteles.
 - La película se interrumpe con un apagón. El equipo se ofrece a ayudar: recoger el fusible, conectar el tablero y encender el proyector, en ese orden. Solo después se revela el plan de la Gran Calabaza.
-- La casa incorpora Wis radioactivo (verde neón y máscara de gas), Wis negro, Wisa negra, Wis calabaza y Wisa calabaza. El Wis calabaza sigue el glosario original: cabeza naranja, cara negra y cuerpo negro. El cabello de las wisas es provisional hasta contar con una referencia de Shesia.
+- La casa incorpora Wis radioactivo (verde neón y máscara de gas), Wis negro, Wisa negra, Wis calabaza y Wisa calabaza. El Wis calabaza sigue el glosario original: cabeza naranja, cara negra y cuerpo negro. Las wisas usan los dos mechones curvados de Seshia (Shesia), copiados de la función `girl()` de `Aventura-Papel/src/art.js`: negros en la Wisa negra y naranja original en la Wisa calabaza.
 - La Gran Calabaza dispara cada 3,8 segundos (3,2 al perder media vida); los proyectiles avanzan a 92 unidades por segundo y aparece un aviso previo. Antes disparaba cada 1,8/1,2 segundos a velocidad 155.
 - Luca, Vicente y Aaron Mamani no tienen piernas en los dibujos.
 
