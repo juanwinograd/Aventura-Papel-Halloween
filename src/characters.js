@@ -11,7 +11,7 @@ const original={
  amaral:[ability('Neblina','fog',6),ability('Sol cegador','sun',5),ability('Viento','wind',3)],
 };
 export const HEROES=[
- {id:'gaspar',name:'Gaspar',costume:'Esqueleto',color:'#22bfd5',special:[ability('Lanzar huesos','bones',1.2)]},
+ {id:'gaspar',name:'Gaspar',costume:'Esqueleto con caperuza roja y guitarra',color:'#22bfd5',special:[ability('Lanzar huesos','bones',1.2)]},
  {id:'vicente',name:'Vicente',costume:'Coatlicue',color:'#f05a96',special:[ability('Crear serpientes','snakes',4)]},
  {id:'fabrizio',name:'Fabrizio',costume:'Vampiro',color:'#9ecb52',special:[ability('Murciélago','bat',5)]},
  {id:'luca',name:'Luca',costume:'Ninja',color:'#20b5d5',special:[ability('Estrella ninja','ninja',1.2),ability('Catana','katana',1)]},
@@ -28,7 +28,15 @@ export function characterSVG(id) {
   const legs=['luca','vicente','aaron'].includes(id)?'':' M45 87L33 103 M45 87L57 103';
   const body='<path d="M45 56V87 M45 64L29 76 M45 64L61 76'+legs+'" fill="none" stroke="'+c+'" stroke-width="5" stroke-linecap="round"/>';
   let art='';
-  if(id==='gaspar')art='<path d="M34 27L30 17M42 25V12M51 26L57 17" stroke="'+c+'" stroke-width="4"/>'+body+'<path d="M45 57V87M34 63Q45 71 56 63M35 70Q45 78 55 70M37 78Q45 84 53 78M33 98L40 88M57 98L50 88" fill="none" stroke="#fff2dc" stroke-width="3" stroke-linecap="round"/><path d="M29 40Q29 24 45 25Q61 24 61 40L55 51H35Z" fill="#fff2dc" stroke="'+c+'" stroke-width="3"/><ellipse cx="39" cy="39" rx="4" ry="5" fill="#302539"/><ellipse cx="51" cy="39" rx="4" ry="5" fill="#302539"/><path d="M42 47L45 43L48 47M38 51H52M42 49V54M47 49V54" stroke="#302539" stroke-width="2"/>';
+  if(id==='gaspar') {
+    const cape='<path d="M30 49 Q45 40 60 49 L73 96 Q46 107 17 96 Z" fill="#b82d40" stroke="#ef8a7e" stroke-width="2"/>';
+    const bones='<path d="M45 57V87M34 63Q45 71 56 63M35 70Q45 78 55 70M37 78Q45 84 53 78M33 98L40 88M57 98L50 88" fill="none" stroke="#fff2dc" stroke-width="3" stroke-linecap="round"/>';
+    const hood='<path d="M20 52 Q13 29 29 16 Q45 3 61 16 Q77 29 70 52 L59 59 H31 Z" fill="#d83d43" stroke="#ffb3a2" stroke-width="2"/><path d="M25 40 Q25 20 45 20 Q65 20 65 40 L59 54 H31 Z" fill="#78263a"/>';
+    const skull='<path d="M29 40Q29 24 45 25Q61 24 61 40L55 51H35Z" fill="#fff2dc" stroke="'+c+'" stroke-width="2.5"/><ellipse cx="39" cy="39" rx="4" ry="5" fill="#302539"/><ellipse cx="51" cy="39" rx="4" ry="5" fill="#302539"/><path d="M42 47L45 43L48 47M38 51H52M42 49V54M47 49V54" stroke="#302539" stroke-width="2"/>';
+    const tie='<path d="M45 57L34 54L37 62L45 57L54 54L53 62Z" fill="#f5a372" stroke="#8c2838" stroke-width="1.5"/>';
+    const guitar='<g transform="rotate(28 42 87)"><path d="M34 77C23 71 20 82 28 88C17 96 26 107 39 101C53 107 63 95 52 88C60 76 49 70 44 77Z" fill="#c88a4b" stroke="#6e422d" stroke-width="2"/><path d="M29 88Q34 91 30 98M49 79Q54 82 48 86" fill="none" stroke="#efc384" stroke-width="1.5"/><path d="M38 48H46V80H38Z" fill="#805332" stroke="#543726" stroke-width="1.5"/><path d="M37 40H47V53H37Z" fill="#b27a42" stroke="#62432e" stroke-width="1.5"/><circle cx="42" cy="87" r="7" fill="#f0c585"/><circle cx="42" cy="87" r="5" fill="#462d25"/><path d="M37 97H48V100H37Z" fill="#543726"/><g fill="none" stroke="#fbe3b0" stroke-width=".55"><path d="M39.5 45V98M40.5 45V98M41.5 45V98M42.5 45V98M43.5 45V98M44.5 45V98"/></g><path d="M36 44H38M36 49H38M46 44H49M46 49H49" stroke="#e3d1ae" stroke-width="2" stroke-linecap="round"/></g>';
+    art=cape+body+bones+hood+skull+tie+guitar+'<path d="M30 74Q32 82 41 87M58 66L61 61" fill="none" stroke="'+c+'" stroke-width="4" stroke-linecap="round"/>';
+  }
   if(id==='vicente')art='<path d="M45 25Q34 19 45 15Q56 11 45 6" fill="none" stroke="'+c+'" stroke-width="4"/>'+body+'<path d="M30 59L23 94Q45 108 68 94L59 59Z" fill="#2b735e" stroke="#f0b661" stroke-width="2"/><g fill="none" stroke="#b6db87" stroke-width="3"><path d="M32 66Q48 70 32 78T34 98M44 64Q60 71 44 79T46 99M56 66Q40 73 56 81T58 98"/></g>'+face+'<path d="M28 31L23 19L37 25L45 15L53 25L67 19L62 32Z" fill="#55ad8c" stroke="#f1c472" stroke-width="2"/><path d="M30 57Q45 70 60 57" stroke="#ffcd80" stroke-width="5" fill="none"/><circle cx="45" cy="62" r="4" fill="#f4dca8"/>';
   if(id==='fabrizio')art='<path d="M32 53L12 99Q45 83 78 99L58 53Z" fill="#842849" stroke="#e377a3" stroke-width="2"/><path d="M33 59L45 85L57 59" fill="#f9e7d1"/>'+body+'<path d="M29 40Q21 19 39 25Q54 17 62 31L60 45Z" fill="'+c+'"/>'+face+'<path d="M36 45L39 53L42 46M49 46L52 53L55 44" fill="white" stroke="#9f4b6b" stroke-width="1"/><path d="M30 50L22 49L32 64M60 50L68 49L58 64" fill="#a1375e"/>';
   if(id==='luca')art=body+'<path d="M28 40Q28 20 45 24Q64 23 62 45L57 56H33Z" fill="#283149" stroke="'+c+'" stroke-width="2"/><path d="M30 34H61V43H30Z" fill="'+c+'"/><path d="M33 36H57V42H33Z" fill="#f9e9cf"/><circle cx="39" cy="39" r="2"/><circle cx="51" cy="39" r="2"/><path d="M61 35L77 28L70 40L79 46L61 41" fill="'+c+'"/><path d="M34 58L57 79M35 80H57" stroke="#ffe0a3" stroke-width="3"/><path d="M63 68L66 59L69 68L78 71L69 74L66 83L63 74L54 71Z" fill="#c3d2e5" stroke="#6b7598" stroke-width="1"/>';

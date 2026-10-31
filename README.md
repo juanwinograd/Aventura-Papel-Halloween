@@ -90,3 +90,6 @@ La ecolocalización revela al rival invisible y disipa sus ilusiones. La risa av
 El Wis calabaza usa el mismo tipo y velocidad de proyectil que la Gran Calabaza. Su agujero negro dura cinco segundos, atrae al oponente cercano y absorbe proyectiles. Los huesos de la catrina anuncian dónde van a brotar y se esquivan saltando a tiempo. Aplastar sitúa a la catrina sobre el rival y la deja caer sobre esa posición; el oponente puede apartarse o saltar.
 
 Los cuatro personajes secretos tienen dibujos propios y solo se agregan al plantel de combate. La aventura conserva sus ocho personajes y sus guardados existentes. Baltazar conserva su forma violeta y nariz rectangular bajo el disfraz de murciélago; la Máquina mantiene su cara larga y lleva alas y varita de hada. El Wis catrina tiene cuerpo de ciudadano, cabeza de catrina y no tiene pelo.
+
+
+Gaspar lleva una caperuza roja y una guitarra acústica sobre su disfraz de esqueleto. La misma ilustración se usa en la aventura, el cine, los selectores y el combate.
