@@ -3,8 +3,11 @@ import { CHAPTERS, MOVIE, SAVE_KEY, HOUSES, readSave } from './story.js';
 import { Art } from './art.js';
 import { HalloweenGame } from './engine.js';
 import { PaperDuel, duelPowers, BONUS_POWERS } from './duel.js';
+import { DUEL_HEROES, duelCharacterSVG } from './duel-characters.js';
+import { DUEL_UNLOCK_KEY, readUnlocks, redeemDuelCode, availableDuelIndices } from './duel-unlocks.js';
 const $=selector=>document.querySelector(selector),canvas=$('#game'),art=new Art(canvas),screen=$('#screen'),dialog=$('#help-dialog');
 const duelInput=[{},{}];let duel=null,duelMenu=false,duelSelection=[0,2],helpDuel=false;
+let duelUnlocks=[];try{duelUnlocks=readUnlocks(localStorage.getItem(DUEL_UNLOCK_KEY));}catch{}
 const input={};let saved=null,audio=null,sound=false,helpPaused=false;
 try{saved=readSave(localStorage.getItem(SAVE_KEY));}catch{$('#save-note').textContent='El guardado no está disponible en este navegador.';}
 const game=new HalloweenGame((event,data)=>{
@@ -71,7 +74,7 @@ dialog.addEventListener('close',()=>{if(helpDuel&&duel?.state==='paused'){duel.p
 const keyMap={ArrowUp:'up',w:'up',ArrowDown:'down',s:'down',ArrowLeft:'left',a:'left',ArrowRight:'right',d:'right'};
 function clearInput(){for(const key of Object.keys(input))delete input[key];for(const state of duelInput)for(const key of Object.keys(state))delete state[key];}
 window.addEventListener('keydown',event=>{
-  if(dialog.open||event.ctrlKey||event.metaKey||event.altKey)return;
+  if(dialog.open||event.ctrlKey||event.metaKey||event.altKey||event.target.closest('input,textarea,select,[contenteditable="true"]'))return;
   const key=event.key.length===1?event.key.toLowerCase():event.key;
   if(duel){handleDuelKey(event,key);return;}
   if(event.target.closest('button,a')&&[' ','Enter'].includes(key))return;
@@ -102,20 +105,21 @@ function openDuelMenu(){
   screen.hidden=false;screen.innerHTML='<div class="screen-card"><span class="screen-kicker">¡HALLOWEEN ESTÁ A SALVO!</span><h2>Ahora…<br><em>¡a pelear!</em></h2><p>Elegí los dos personajes en el panel de abajo.<br>También pueden usar el mismo personaje.</p><button class="primary" data-screen-action="duel-start">Empezar combate →</button><button class="subtle" data-screen-action="duel-back">Volver a la aventura</button></div>';
   renderDuelSelection();$('#duel-config').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
-function renderDuelSelection(){for(let player=0;player<2;player++)$('#duel-picker-'+player).innerHTML=HEROES.map((h,i)=>'<button data-duel-select="'+i+'" data-player="'+player+'" aria-pressed="'+(duelSelection[player]===i)+'">'+characterSVG(h.id)+'<span>'+h.name+'</span></button>').join('');}
+function renderDuelSelection(){for(let player=0;player<2;player++)$('#duel-picker-'+player).innerHTML=availableDuelIndices(duelUnlocks).map(i=>{const h=DUEL_HEROES[i];return '<button data-duel-select="'+i+'" data-player="'+player+'" aria-pressed="'+(duelSelection[player]===i)+'">'+duelCharacterSVG(h.id)+'<span>'+h.name+'</span><small>'+h.costume+(h.secretGroup?' · Secreto':'')+'</small></button>';}).join('');}
 function startDuel(){
  if(!game.won&&!saved?.won)return;
+ const available=availableDuelIndices(duelUnlocks);duelSelection=duelSelection.map(i=>available.includes(i)?i:0);
  clearInput();duelMenu=false;duel=new PaperDuel(duelSelection,$('#duel-mode').value,(event,data)=>{if(event==='sound')playSound(data);if(event==='round-end')syncDuelScreen();});$('#duel-config').hidden=true;$('#duel-controls').hidden=false;screen.hidden=true;renderDuelControls();updateDuelHUD();focusGame();$('.game-shell').scrollIntoView({behavior:'smooth',block:'start'});
 }
 function leaveDuel(){clearInput();duel=null;duelMenu=false;$('#duel-config').hidden=true;$('#duel-controls').hidden=true;$('.powers-section').hidden=false;$('.cast-section').hidden=false;if(!game.won&&saved?.won)game.start(saved);syncScreen();renderCast();updateHUD();}
 function duelScreenAction(action){if(action==='duel-menu')openDuelMenu();if(action==='duel-start')startDuel();if(action==='duel-back')leaveDuel();if(action==='duel-resume'){duel.pause();syncDuelScreen();}if(action==='duel-next'){duel.nextRound();syncDuelScreen();}if(action==='duel-rematch')startDuel();}
 function syncDuelScreen(){
  if(!duel)return;clearInput();screen.hidden=duel.state==='playing';if(screen.hidden){focusGame();return;}
- const paused=duel.state==='paused',finished=duel.state==='finished',winner=duel.roundWinner===null?'¡Empate!':HEROES[duel.fighters[finished?duel.winner:duel.roundWinner].hero].name;
+ const paused=duel.state==='paused',finished=duel.state==='finished',winner=duel.roundWinner===null?'¡Empate!':DUEL_HEROES[duel.fighters[finished?duel.winner:duel.roundWinner].hero].name;
  screen.innerHTML='<div class="screen-card"><span class="screen-kicker">COMBATE AMISTOSO DE HALLOWEEN</span><h2>'+(paused?'Una pequeña<br><em>pausa.</em>':finished?'¡Ganó<br><em>'+winner+'!</em>':winner+'<br><em>'+(duel.roundWinner===null?'Otra oportunidad.':'ganó el round.')+'</em>')+'</h2><p>'+duel.fighters.map(f=>'J'+(f.index+1)+': '+f.wins+' rounds').join(' · ')+'</p><button class="primary" data-screen-action="'+(paused?'duel-resume':finished?'duel-rematch':'duel-next')+'">'+(paused?'Seguir jugando':finished?'Revancha':'Siguiente round')+' →</button><button class="subtle" data-screen-action="duel-menu">Cambiar personajes</button><button class="subtle" data-screen-action="duel-back">Volver a la aventura</button></div>';updateDuelHUD();
 }
 function renderDuelControls(){
- $('#duel-controls').innerHTML=duel.fighters.map((f,player)=>'<div class="duel-player"><h3>J'+(player+1)+' · '+HEROES[f.hero].name+(duel.mode==='cpu'&&player===1?' (compu)':'')+'</h3><progress id="duel-life-'+player+'" max="100" value="100" aria-label="Vida jugador '+(player+1)+'"></progress><p class="duel-key-help">'+(player===0?'A/D · W salto · F golpe · G defensa':'←/→ · ↑ salto · K golpe · L defensa')+'</p><div class="duel-pad"><button data-player="'+player+'" data-duel-hold="left" aria-label="J'+(player+1)+' izquierda">←</button><button data-player="'+player+'" data-duel-hold="right" aria-label="J'+(player+1)+' derecha">→</button><button data-player="'+player+'" data-duel-action="jump">↑ Saltar</button><button data-player="'+player+'" data-duel-action="attack">Golpe</button><button data-player="'+player+'" data-duel-hold="guard">Defensa</button></div><div class="duel-power-list">'+duelPowers(f.hero).map((p,i)=>'<button data-player="'+player+'" data-duel-power="'+i+'"><kbd>'+duelKeys[player][i].toUpperCase()+'</kbd> '+p.name+' <small>Listo</small></button>').join('')+'</div><button class="bonus-button" data-player="'+player+'" data-duel-action="bonus"><kbd>'+(player===0?'T':'O')+'</kbd> <span id="duel-bonus-'+player+'">Buscá una calabaza</span></button></div>').join('');
+ $('#duel-controls').innerHTML=duel.fighters.map((f,player)=>'<div class="duel-player"><h3>J'+(player+1)+' · '+DUEL_HEROES[f.hero].name+(duel.mode==='cpu'&&player===1?' (compu)':'')+'</h3><progress id="duel-life-'+player+'" max="100" value="100" aria-label="Vida jugador '+(player+1)+'"></progress><p class="duel-key-help">'+(player===0?'A/D · W salto · F golpe · G defensa':'←/→ · ↑ salto · K golpe · L defensa')+'</p><div class="duel-pad"><button data-player="'+player+'" data-duel-hold="left" aria-label="J'+(player+1)+' izquierda">←</button><button data-player="'+player+'" data-duel-hold="right" aria-label="J'+(player+1)+' derecha">→</button><button data-player="'+player+'" data-duel-action="jump">↑ Saltar</button><button data-player="'+player+'" data-duel-action="attack">Golpe</button><button data-player="'+player+'" data-duel-hold="guard">Defensa</button></div><div class="duel-power-list">'+duelPowers(f.hero).map((p,i)=>'<button data-player="'+player+'" data-duel-power="'+i+'"><kbd>'+duelKeys[player][i].toUpperCase()+'</kbd> '+p.name+' <small>Listo</small></button>').join('')+'</div><button class="bonus-button" data-player="'+player+'" data-duel-action="bonus"><kbd>'+(player===0?'T':'O')+'</kbd> <span id="duel-bonus-'+player+'">Buscá una calabaza</span></button></div>').join('');
 }
 function updateDuelHUD(){
  if(!duel)return;
@@ -139,6 +143,14 @@ $('#duel-controls').addEventListener('pointerdown',event=>{const button=event.ta
 for(const type of ['pointerup','pointercancel','lostpointercapture'])$('#duel-controls').addEventListener(type,event=>{const b=event.target.closest('[data-duel-hold]');if(b)delete duelInput[Number(b.dataset.player)][b.dataset.duelHold];});
 // Keyboard activation of the same accessible buttons generates a click with detail 0.
 $('#duel-controls').addEventListener('click',event=>{if(event.detail!==0||!duel)return;const b=event.target.closest('button');if(!b||b.disabled||b.dataset.duelHold)return;const p=Number(b.dataset.player);if(b.dataset.duelPower!==undefined)duel.power(p,Number(b.dataset.duelPower));else if(b.dataset.duelAction)duel[b.dataset.duelAction](p);});
+$('#duel-code-form').addEventListener('submit',event=>{
+ event.preventDefault();if(!duelMenu)return;
+ const result=redeemDuelCode($('#duel-code').value,duelUnlocks),status=$('#duel-code-status');
+ if(!result.accepted){status.textContent='Ese código no coincide. Revisá lo que escribiste.';return;}
+ duelUnlocks=result.groups;let persistent=true;try{localStorage.setItem(DUEL_UNLOCK_KEY,JSON.stringify({version:1,groups:duelUnlocks}));}catch{persistent=false;}
+ status.textContent=(result.changed?'¡Desbloqueados: ':'Ya tenías a ')+result.heroes.join(' y ')+'.'+(persistent?' Disponibles para los dos jugadores.':' Disponibles durante esta sesión; el navegador no permitió guardarlos.');
+ $('#duel-code').value='';renderDuelSelection();
+});
 renderCast();updateHUD();
 let last=performance.now(),hudClock=0;
 function frame(now){const dt=Math.min((now-last)/1000,.04);last=now;if(duel){duel.update(dt,duelInput);art.drawDuel(duel);}else{game.update(dt,input);art.draw(game);}hudClock+=dt;if(hudClock>.2){hudClock=0;updateHUD();}requestAnimationFrame(frame);}

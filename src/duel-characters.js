@@ -1,0 +1,20 @@
+import { HEROES, characterSVG } from './characters.js';
+const ability=(name,kind,cooldown)=>({name,kind,cooldown});
+export const SECRET_HEROES=[
+ {id:'baltazar',name:'Baltazar',costume:'Murciélago',color:'#9964d2',secretGroup:'school',powers:[ability('Lanzar cuadrados','square',4),ability('Camuflarse','camouflage',9),ability('Ecolocalización','echo',7)]},
+ {id:'maquina-bobadas',name:'Máquina de bobadas',costume:'Hada',color:'#e8759d',secretGroup:'school',powers:[ability('Ataque de risa','laugh',18),ability('Hechizarlos','hex',8)]},
+ {id:'wis-calabaza',name:'Wis calabaza',costume:'Calabaza',color:'#ff9637',secretGroup:'halloween',powers:[ability('Proyectil de calabaza','pumpkin',3.8),ability('Agujero negro','black-hole',11)]},
+ {id:'wis-catrina',name:'Wis catrina',costume:'Catrina',color:'#f4e9d3',secretGroup:'halloween',powers:[ability('Huesos del suelo','bone-ground',6),ability('Teletransportarse','teleport',6),ability('Aplastar','crush',7)]},
+];
+// Combat-only roster: the original eight adventure characters keep their indices.
+export const DUEL_HEROES=[...HEROES,...SECRET_HEROES];
+export function duelCharacterSVG(id){
+ if(!SECRET_HEROES.some(h=>h.id===id))return characterSVG(id);
+ const body='<path d="M45 66V101M45 76L29 88M45 76L61 88" fill="none" stroke="#292431" stroke-width="7" stroke-linecap="round"/>';
+ let drawing='';
+ if(id==='baltazar')drawing='<path d="M32 48L7 22L5 62L18 56L24 74L38 66M58 48L83 22L85 62L72 56L66 74L52 66" fill="#52305e" stroke="#caa0e9" stroke-width="2"/>'+body+'<path d="M30 27L28 12L41 23M49 23L63 12L60 28" fill="#9964d2" stroke="#d4a4f1" stroke-width="2"/><ellipse cx="45" cy="45" rx="19" ry="25" fill="#9964d2" stroke="#dac4f3" stroke-width="2"/><circle cx="38" cy="39" r="2" fill="#21172d"/><circle cx="52" cy="39" r="2" fill="#21172d"/><path d="M44 42H50V49H44Z" fill="#c09be1" stroke="#332042" stroke-width="2"/><path d="M36 55Q45 62 55 54" fill="none" stroke="#30203e" stroke-width="2"/>';
+ if(id==='maquina-bobadas')drawing='<path d="M29 40Q-1 9 5 45Q-1 70 28 65M61 40Q91 9 85 45Q91 70 62 65" fill="#c5e8f577" stroke="#b8d8f6" stroke-width="2"/><path d="M23 58Q11 70 14 91M67 58Q78 72 73 89" stroke="#e8759d" stroke-width="7" fill="none" stroke-linecap="round"/><ellipse cx="45" cy="49" rx="22" ry="32" fill="#f3b6cd" stroke="#e8759d" stroke-width="3"/><circle cx="37" cy="42" r="3" fill="#59324a"/><circle cx="53" cy="42" r="3" fill="#59324a"/><path d="M35 58Q45 73 56 57M42 46L48 53L42 53" fill="none" stroke="#8d4568" stroke-width="3" stroke-linecap="round"/><path d="M27 20L30 10L39 17L46 7L53 17L61 10L64 22" fill="#ffe4a0" stroke="#d9af75" stroke-width="2"/><path d="M73 86L79 57" stroke="#f7ce83" stroke-width="3"/><path d="M79 43L82 51L90 54L82 57L79 65L76 57L68 54L76 51Z" fill="#ffedb5"/>';
+ if(id==='wis-calabaza')drawing=body+'<path d="M45 25Q39 15 49 10" stroke="#97be65" stroke-width="5" fill="none"/><rect x="19" y="26" width="52" height="44" rx="10" fill="#ff9637" stroke="#bf6638" stroke-width="2"/><circle cx="35" cy="42" r="4" fill="#211927"/><circle cx="55" cy="42" r="4" fill="#211927"/><path d="M29 54Q43 61 62 51L58 65L33 65Z" fill="#211927"/>';
+ if(id==='wis-catrina')drawing=body+'<path d="M22 45Q21 21 45 21Q69 21 68 45L62 65L56 75H34L28 65Z" fill="#fff4df" stroke="#b4a2b6" stroke-width="2"/><g fill="none" stroke="#d45c98" stroke-width="3"><circle cx="34" cy="44" r="10"/><circle cx="56" cy="44" r="10"/><path d="M24 44H44M34 34V54M46 44H66M56 34V54"/></g><circle cx="34" cy="44" r="6" fill="#302334"/><circle cx="56" cy="44" r="6" fill="#302334"/><path d="M45 50L40 59H50Z" fill="#302334"/><path d="M32 65H58M37 62V70M43 62V71M49 62V71M55 62V70" stroke="#503c55" stroke-width="2"/><path d="M45 27L40 32L45 37L50 32Z" fill="#47b5c2"/><path d="M25 57L31 59M59 59L65 57" stroke="#47b5c2" stroke-width="3"/><path d="M38 80L45 87L52 80" stroke="#d45c98" stroke-width="4" fill="none"/>';
+ return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 115" aria-hidden="true"><ellipse cx="45" cy="108" rx="25" ry="4" fill="#100c1a" opacity=".25"/>'+drawing+'</svg>';
+}

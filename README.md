@@ -74,3 +74,19 @@ Cada pocos segundos cae una calabaza. Recogerla otorga una carga de fuego, hielo
 Los dos jugadores tienen botones en pantalla. En teléfonos se preselecciona contra la compu, y se puede cambiar a dos jugadores. El combate es local; no añade salas online.
 
 Se quitó el botón de elección automática del personaje en el diálogo de cada vecino. La selección general de personajes sigue disponible para resolver los retos.
+
+
+## Códigos secretos del combate
+
+En **Pelear entre nosotros → Elegí los dos personajes**, la barra **Código secreto** desbloquea personajes para ambos jugadores. Las mayúsculas, los espacios repetidos y las tildes no cambian el resultado. Los códigos incorrectos no modifican la selección y repetir un código no duplica personajes. Se guardan por separado del progreso de la aventura. Si el navegador bloquea el guardado, el desbloqueo funciona durante la sesión y se informa en pantalla.
+
+| Código | Personajes y poderes |
+| --- | --- |
+| Escuela Bavio 16 12 | Baltazar, disfrazado de murciélago: cuadrados, camuflaje y ecolocalización. Máquina de bobadas, disfrazada de hada: risa y hechizo. |
+| Halloween vs Día de los muertos | Wis calabaza: proyectiles de la Gran Calabaza y agujeros negros. Wis catrina: huesos del suelo, teletransporte y aplastamiento. |
+
+La ecolocalización revela al rival invisible y disipa sus ilusiones. La risa avisa antes de activarse y deja al rival riendo cinco segundos; cubrirse o saltar a tiempo permite evitarla. El hechizo de hada lanza una estrella que transforma al rival en mariposa durante cuatro segundos: se mueve más lento y no puede atacar. Estos efectos tienen una breve inmunidad para evitar encadenarlos sin descanso.
+
+El Wis calabaza usa el mismo tipo y velocidad de proyectil que la Gran Calabaza. Su agujero negro dura cinco segundos, atrae al oponente cercano y absorbe proyectiles. Los huesos de la catrina anuncian dónde van a brotar y se esquivan saltando a tiempo. Aplastar sitúa a la catrina sobre el rival y la deja caer sobre esa posición; el oponente puede apartarse o saltar.
+
+Los cuatro personajes secretos tienen dibujos propios y solo se agregan al plantel de combate. La aventura conserva sus ocho personajes y sus guardados existentes. Baltazar conserva su forma violeta y nariz rectangular bajo el disfraz de murciélago; la Máquina mantiene su cara larga y lleva alas y varita de hada. El Wis catrina tiene cuerpo de ciudadano, cabeza de catrina y no tiene pelo.
