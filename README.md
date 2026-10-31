@@ -51,3 +51,26 @@ Los nuevos se activan con Q y, cuando hay dos, R. Los originales se activan con 
 | Amaral | Pintar de violeta | Neblina, sol cegador, viento |
 
 Los poderes originales se contrastaron con `juanwinograd/Paper-Kombat/src/content.js`. Los guardados de la primera versión siguen cargando; el progreso se retoma al comienzo del capítulo.
+
+
+## Combate al salvar Halloween
+
+Al terminar la aventura se desbloquea **Pelear entre nosotros**, un combate lateral inspirado en Paper Kombat. El desbloqueo se conserva con la victoria guardada. Se puede jugar de a dos en el mismo dispositivo o contra la compu, elegir cualquiera de los ocho personajes y repetir personaje. Hay saltos, defensa, vida de 100, rounds de 60 segundos y victoria al ganar dos rounds. Los empates no suman.
+
+Conserva los poderes originales y los de los disfraces. Fabrizio agrega **Drenar sangre**: desde cerca y mirando al rival, le quita vida, recupera hasta 8 puntos y lo deja gris, tenue y lento durante 7 segundos. Es un efecto de historieta sin sangre visible. Los poderes tienen recargas individuales.
+
+Cada pocos segundos cae una calabaza. Recogerla otorga una carga de fuego, hielo, trueno, escudo o curación. Se activa con T (J1), O (J2) o el botón especial. Solo se puede llevar una carga; después de usarla se puede recoger otra. Las calabazas que no se recogen desaparecen.
+
+| Control | Jugador 1 | Jugador 2 |
+| --- | --- | --- |
+| Moverse | A / D | ← / → |
+| Saltar | W | ↑ |
+| Golpe | F | K |
+| Defensa | G | L |
+| Poderes, en el orden de los botones | Q / R / Z / X / C / V | 7 / 8 / 9 / 0 / − / = |
+| Poder de calabaza | T | O |
+| Pausa | P o Escape | P o Escape |
+
+Los dos jugadores tienen botones en pantalla. En teléfonos se preselecciona contra la compu, y se puede cambiar a dos jugadores. El combate es local; no añade salas online.
+
+Se quitó el botón de elección automática del personaje en el diálogo de cada vecino. La selección general de personajes sigue disponible para resolver los retos.

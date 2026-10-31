@@ -74,6 +74,35 @@ export class Art {
     for(const delayed of g.delayed){this.circle(delayed.x,delayed.y-25,delayed.radius,null,'#e7b6f2',2);this.text(delayed.kind==='hammer'?'◆':'☁',delayed.x,delayed.y-100,40,'#dfc8f2','center');}
     if(g.challenge){const h=HOUSES[g.challenge.index];for(const prop of g.props){if(prop.done){this.text('✓',prop.x,prop.y-25,32,'#bdd88c','center');continue;}if(h.task==='fly'){this.star(prop.x,prop.y-40,18,'#ffe0a0');this.circle(prop.x,prop.y,23,null,'#a5b8cc',1);}else if(h.task==='resist'){this.circle(prop.x,prop.y,30,'#ffdb8222','#e8c371',2);if(prop===g.props[1])this.text(Math.min(3,g.challenge.time).toFixed(1)+' / 3 s',prop.x,prop.y-45,22,'#ffdb82','center');}else{this.box(prop.x-18,prop.y-64,36,50,'#80697f','#d6b9d2',2);this.circle(prop.x,prop.y-48,8,h.kind==='paint'?'#f0dbbf':'#e9c283');this.text(h.kind==='party'?'♪':h.kind==='time'?'◷':h.kind==='wind'?'✣':h.kind==='lightning'?'ϟ':'◎',prop.x,prop.y-21,25,'#352738','center');}}}
   }
+  drawDuel(duel){
+    const c=this.c;c.clearRect(0,0,1120,630);this.sky(duel.time);this.box(25,510,1070,100,'#634355','#ad7c7c',3);this.line(30,512,1090,512,'#e0b98c',4);
+    for(let i=0;i<9;i++)this.pumpkin(65+i*125,590,.65);
+    this.text('PAPER KOMBAT · NOCHE DE HALLOWEEN',560,40,26,'#ffd29d','center');this.text('ROUND '+duel.round+' · '+Math.ceil(duel.seconds)+' s',560,76,25,'#edcee8','center');
+    for(const f of duel.fighters){
+      const left=f.index===0,x=left?50:725,name=HEROES[f.hero].name;
+      this.text('J'+(f.index+1)+' · '+name,x,106,27,'#f2dcf2');this.box(x,117,345,17,'#21162b','#ba92b7',1);this.box(x+1,118,343*f.hp/100,15,left?'#8dcfb7':'#eda6b6',null);this.text(Math.ceil(f.hp)+' / 100 · Rounds: '+f.wins,x,158,19,'#d8c4df');
+    }
+    for(const p of duel.pumpkins){this.pumpkin(p.x,p.y,1);if(p.landed)this.text('PODER',p.x,p.y+30,17,'#ffcf81','center');else this.star(p.x,p.y-55,9,'#ffdd9e');}
+    for(const d of duel.delayed){this.box(d.x-d.radius,510-8,d.radius*2,9,'#e5b0f033','#f0b6ee',2);this.text(d.kind==='hammer'?'◆':'ϟ',d.x,350,45,'#f7c9ff','center');}
+    for(const ally of duel.summons){if(ally.kind==='snake'){this.path([[ally.x-20,502],[ally.x-7,489],[ally.x+5,501],[ally.x+20,487]],null,'#b1df7b',7);this.circle(ally.x+22,485,7,'#b1df7b');}else this.hero(duel.fighters[ally.owner].hero,ally.x,ally.y,duel.time,1.1,ally.kind==='illusions'?.3:.65);}
+    for(const b of duel.projectiles){if(b.kind==='fire'){this.circle(b.x,b.y,14,'#ff8d43');this.star(b.x,b.y,9,'#ffe7a3');}else if(b.kind==='ice')this.star(b.x,b.y,17,'#b2f4ff');else if(b.kind==='lightning')this.text('ϟ',b.x,b.y+12,42,'#d1faff','center');else this.projectile(b);}
+    for(const f of duel.fighters){
+      c.save();const faded=f.statuses.drained>0,alpha=f.hp<=0?.25:faded?.48:(f.statuses.invisible>0||f.statuses.fog>0)?.25:1;
+      c.filter=(faded?'grayscale(1) ':'')+(f.statuses.paint>0?'hue-rotate(245deg)':'');
+      if(f.statuses.bat>0){c.globalAlpha=alpha;this.bat(f.x,f.y-50,2,duel.time);}else this.hero(f.hero,f.x,f.y,duel.time,f.statuses.mini>0?.65:1.35,alpha);
+      c.restore();
+      if(f.statuses.flight>0)this.path([[f.x-20,f.y-60],[f.x-70,f.y-110],[f.x-45,f.y-45],[f.x,f.y-55],[f.x+45,f.y-45],[f.x+70,f.y-110],[f.x+20,f.y-60]],null,'#c0a7d8',5);
+      if(f.guard||f.statuses.shield>0||f.statuses.resist>0)this.circle(f.x,f.y-52,75,'#a3defa12',f.guard?'#b8e6ec':'#dec0f7',3);
+      if(f.statuses.reflect>0)this.box(f.x-52,f.y-115,104,122,'#c5e4ff14','#bfe9ff',3);
+      if(f.statuses.trap>0)this.box(f.x-48,f.y-110,96,115,f.statuses.gift>0?'#eaa4d46b':'#b8ceff28','#e4b9ef',3);
+      if(f.statuses.party>0)this.text('♪ ♫',f.x,f.y-130,32,'#ffd28f','center');
+      if(f.statuses.drained>0)this.text('DRENADO · '+Math.ceil(f.statuses.drained)+' s',f.x,f.y-140,20,'#c9c3ce','center');
+      if(f.statuses.slow>0)this.text('LENTO',f.x,f.y-115,18,'#bbebf2','center');
+      if(f.attack>0)this.path([[f.x+f.facing*35,f.y-85],[f.x+f.facing*115,f.y-60],[f.x+f.facing*55,f.y-25]],null,'#ffe2a1',5);
+      this.text('J'+(f.index+1),f.x,f.y+29,19,f.index===0?'#aee2c9':'#ffb9cc','center');
+    }
+    for(const e of duel.effects){c.save();c.globalAlpha=Math.min(1,e.life);if(e.kind==='drain'){this.path([[e.toX,e.toY],[e.x,e.y]],null,'#db729a',4);for(let i=0;i<5;i++){const t=(duel.time*2+i/5)%1;this.circle(e.toX+(e.x-e.toX)*t,e.toY+(e.y-e.toY)*t,5,'#e9a2bc');}}else this.text(e.text,e.x,e.y-(1.2-e.life)*20,25,e.color,'center');c.restore();}
+  }
   draw(g){const c=this.c;c.clearRect(0,0,1120,630);if(g.stage===0)this.street(g);else if(g.stage===1)this.cinema(g);else if(g.stage===2)this.house(g);else this.arena(g);
     if((g.stage!==1||g.blackout)&&g.mode!=='title'){
       for(const e of g.enemies)if(e.hp>0){if(e.kind==='wis')this.wis(e,g.time);else this.ghost(e.x,e.y,g.time+e.seed,e.paint>0?'#b875ff':e.stun>0?'#f0ddb0':'#dcccf0');if(e.trap>0){this.box(e.x-30,e.y-70,60,80,e.trapKind==='gift'?'#efb9d04a':'#87c9fb33','#e5c9ff',2);this.text(e.trapKind==='gift'?'🎁':'△',e.x,e.y-75,24,'#fff0d6','center');}if(e.party>0)this.text('♪ ♫',e.x,e.y-70,25,'#ffce77','center');if(g.stage===3){this.text('♥'.repeat(e.hp),e.x,e.y+20,14,'#deafd5','center');}}

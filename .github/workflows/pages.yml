@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: '22'
       - name: Comprobar Halloween
-        run: node --test tests/halloween.test.mjs
+        run: node --test tests/*.test.mjs
       - name: Preparar sitio estático
         run: node scripts/build.mjs
       - uses: actions/configure-pages@v5
